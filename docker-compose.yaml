@@ -1,0 +1,67 @@
+services:
+  kafka:
+    image: confluentinc/cp-kafka:latest
+    hostname: kafka
+    container_name: kafka-confluent
+    networks:
+      - broker-kafka
+    ports:
+      - "9092:9092"
+      - "9093:9093"
+    environment:
+      KAFKA_KRAFT_MODE: "true"
+      KAFKA_PROCESS_ROLES: controller,broker
+      KAFKA_NODE_ID: 1
+      KAFKA_CONTROLLER_QUORUM_VOTERS: "1@kafka:9093"
+      KAFKA_LISTENERS: BROKER://kafka:9091,EXTERNAL://0.0.0.0:9092,CONTROLLER://kafka:9093
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: BROKER:PLAINTEXT,CONTROLLER:PLAINTEXT,EXTERNAL:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: BROKER
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_ADVERTISED_LISTENERS: BROKER://kafka:9091,EXTERNAL://127.0.0.1:9092
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_LOG_CLEANER_ENABLE: "false"
+      KAFKA_NUM_PARTITIONS: 1
+      KAFKA_LOG_RETENTION_HOURS: 168
+      KAFKA_LOG_RETENTION_BYTES: -1
+      CLUSTER_ID: MkU3OEVBNTcwNTJENDM2Qk
+    cap_drop:
+      - NET_RAW
+
+  init-kafka:
+    image: confluentinc/cp-kafka:latest
+    container_name: init-kafka
+    networks:
+      - broker-kafka
+    depends_on:
+      - kafka
+    entrypoint: [ '/bin/sh', '-c' ]
+    command: |
+      "
+      # blocks until kafka is reachable
+      kafka-topics --list --bootstrap-server kafka:9091
+
+      echo -e 'Creating topic '
+      
+      kafka-topics --bootstrap-server kafka:9091 --create --if-not-exists --topic kafka-playground-topic --partitions 10 --replication-factor 1
+      
+      echo -e 'Sucessfully created topic'
+
+      kafka-topics --list --bootstrap-server broker:29092
+      "
+
+  kafdrop:
+    image: obsidiandynamics/kafdrop:latest
+    container_name: kafdrop-local
+    networks:
+      - broker-kafka
+    depends_on:
+      - kafka
+    ports:
+      - "9001:9000"
+    environment:
+      KAFKA_BROKER_CONNECT: kafka:9091
+
+networks:
+  broker-kafka:
+    driver: bridge
