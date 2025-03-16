@@ -1,9 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.13.35828.75 d17.13
+VisualStudioVersion = 17.13.35828.75
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KafkaPlayground", "KafkaPlayground.csproj", "{C6315653-18EE-430F-BC94-CA73D61F51E9}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KafkaPlayground", "src\KafkaPlayground.API\KafkaPlayground.csproj", "{9FA5207C-8652-9065-DE41-C8897E89F4D8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KafkaPlayground.Worker", "src\KafkaPlayground.Worker\KafkaPlayground.Worker.csproj", "{38A6A678-FC0A-7B4A-DBC7-15889D84B702}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -11,15 +15,23 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{C6315653-18EE-430F-BC94-CA73D61F51E9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{C6315653-18EE-430F-BC94-CA73D61F51E9}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{C6315653-18EE-430F-BC94-CA73D61F51E9}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{C6315653-18EE-430F-BC94-CA73D61F51E9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9FA5207C-8652-9065-DE41-C8897E89F4D8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9FA5207C-8652-9065-DE41-C8897E89F4D8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9FA5207C-8652-9065-DE41-C8897E89F4D8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9FA5207C-8652-9065-DE41-C8897E89F4D8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{38A6A678-FC0A-7B4A-DBC7-15889D84B702}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{38A6A678-FC0A-7B4A-DBC7-15889D84B702}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{38A6A678-FC0A-7B4A-DBC7-15889D84B702}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{38A6A678-FC0A-7B4A-DBC7-15889D84B702}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{9FA5207C-8652-9065-DE41-C8897E89F4D8} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{38A6A678-FC0A-7B4A-DBC7-15889D84B702} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {E7AFE94A-40A1-427C-A7FE-8BAF594EF5B3}
+		SolutionGuid = {10EE0A44-06BF-46A9-8D95-FB66D9AC87DF}
 	EndGlobalSection
 EndGlobal

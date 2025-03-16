@@ -10,16 +10,19 @@ namespace KafkaPlayground.Services
     {
         public async Task PublishMessageAsync(KafkaMessageRequest request, CancellationToken cancellationToken)
         {
-            for (var i = 0; i < request.MessageAmount; i++)
+            Task.Run(async () =>
             {
-                var message = new SampleMessage
+                for (var i = 0; i < request.MessageAmount; i++)
                 {
-                    Id = Guid.NewGuid(),
-                    DateTime = DateTime.Now
-                };
+                    var message = new SampleMessage
+                    {
+                        Id = Guid.NewGuid(),
+                        DateTime = DateTime.Now
+                    };
 
-                await publisher.PublishAsync(message, options.Value.KafkaPlaygroundPublisher.Name, cancellationToken);
-            }
+                    await publisher.PublishAsync(message, options.Value.KafkaPlaygroundPublisher.Name, cancellationToken);
+                }
+            });
         }
     }
 }
