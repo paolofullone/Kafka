@@ -5,6 +5,7 @@ using WebApi.Services;
 
 namespace WebApi.Endpoints
 {
+    // ToDo: rename controller and add endpoint to consult the messages stored in database
     public static class KafkaPublisherEndpoints
     {
         public static IEndpointRouteBuilder MapKafkaPublisherEndpoints(this IEndpointRouteBuilder app)
@@ -27,8 +28,8 @@ namespace WebApi.Endpoints
         }
 
         private static async Task<IResult> PublishKafka(
-            [FromServices] IKafkaProducerService kafkaProducerService, 
-            KafkaMessageRequest request, 
+            [FromServices] IKafkaProducerService kafkaProducerService,
+            KafkaMessageRequest request,
             CancellationToken cancellationToken)
         {
             await kafkaProducerService.PublishMessageAsync(request, CancellationToken.None);
