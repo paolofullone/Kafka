@@ -4,6 +4,7 @@ using Confluent.Kafka;
 using Infrastructure.MessageBus;
 using Infrastructure.MessageBus.Interfaces;
 using WebApi.Endpoints;
+using WebApi.Extensions;
 using WebApi.Services;
 using WebApi.Settings;
 
@@ -25,7 +26,9 @@ builder.Services.AddApiVersioning(options =>
     options.SubstituteApiVersionInUrl = true; // Substitute version in URL
 });
 
-builder.Services.AddEndpointsApiExplorer();
+builder.Services
+    .AddEndpointsApiExplorer()
+    .AddApplicationHealthChecks(builder.Configuration);
 
 builder.Services.AddSwaggerGen(options =>
 {
@@ -76,5 +79,6 @@ app.UseHttpsRedirection();
 
 // Map Kafka Publisher Endpoints
 app.MapKafkaPublisherEndpoints();
+app.MapApplicationHealthChecks();
 
 app.Run();
