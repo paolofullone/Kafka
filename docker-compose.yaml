@@ -1,4 +1,30 @@
 services:
+
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2019-latest
+    container_name: sqlserver
+    ports:
+      - "1433:1433"
+    environment:
+      SA_PASSWORD: "Password123!"
+      ACCEPT_EULA: "Y"
+    healthcheck:
+      test: ["CMD-SHELL", "/opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P Password123! -Q 'SELECT 1'"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+    restart:
+      always
+
+  init-database:
+    image: mcr.microsoft.com/mssql-tools
+    depends_on:
+      - sqlserver
+    volumes:
+      - ./src/data/:/tmp/
+    command: /bin/bash -c "sleep 60 && /opt/mssql-tools/bin/sqlcmd -S sqlserver -U sa -P Password123! -d master -i tmp/init.sql"
+
   kafka:
     image: confluentinc/cp-kafka:latest
     hostname: kafka
@@ -47,7 +73,7 @@ services:
       
       echo -e 'Sucessfully created topic'
 
-      kafka-topics --list --bootstrap-server broker:29092
+      kafka-topics --list --bootstrap-server kafka:9091
       "
 
   kafdrop:
