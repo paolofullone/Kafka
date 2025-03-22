@@ -1,8 +1,9 @@
 ﻿using Confluent.Kafka;
+using Infrastructure.MessageBus.Interfaces;
 using System.Runtime.CompilerServices;
 using System.Text.Json;
 
-namespace KafkaPlayground.Infrastructore.MessageBus
+namespace Infrastructure.MessageBus
 {
     public class KafkaMessagePublisher(ProducerConfig producerConfig) : IMessagePublisher
     {

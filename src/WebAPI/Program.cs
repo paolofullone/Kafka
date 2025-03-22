@@ -1,10 +1,11 @@
 using Asp.Versioning;
 using Asp.Versioning.ApiExplorer;
 using Confluent.Kafka;
-using KafkaPlayground.Endpoints;
-using KafkaPlayground.Infrastructore.MessageBus;
-using KafkaPlayground.Services;
-using KafkaPlayground.Settings;
+using Infrastructure.MessageBus;
+using Infrastructure.MessageBus.Interfaces;
+using WebApi.Endpoints;
+using WebApi.Services;
+using WebApi.Settings;
 
 var builder = WebApplication.CreateBuilder(args);
 

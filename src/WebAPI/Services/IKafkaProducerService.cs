@@ -1,6 +1,6 @@
-﻿using KafkaPlayground.Models;
+﻿using Domain.Models;
 
-namespace KafkaPlayground.Services
+namespace WebApi.Services
 {
     public interface IKafkaProducerService
     {

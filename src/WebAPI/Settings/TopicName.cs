@@ -1,4 +1,4 @@
-﻿namespace KafkaPlayground.Settings
+﻿namespace WebApi.Settings
 {
     public class TopicName
     {

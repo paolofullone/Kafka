@@ -1,6 +1,6 @@
-﻿namespace KafkaPlayground.Worker.Infrastructure.MessageBus
+﻿namespace Infrastructure.MessageBus.Interfaces
 {
-    interface IMessageConsumer<T>
+    public interface IMessageConsumer<T>
     {
         public string Topic { get; }
         Task StartConsumer(CancellationToken cancellationToken);

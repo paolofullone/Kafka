@@ -1,4 +1,4 @@
-﻿namespace KafkaPlayground.Models
+﻿namespace Domain.Models
 {
     public class KafkaMessageRequest
     {

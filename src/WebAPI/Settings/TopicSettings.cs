@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.Diagnostics.HealthChecks;
 
-namespace KafkaPlayground.Settings
+namespace WebApi.Settings
 {
     public class TopicSettings
     {

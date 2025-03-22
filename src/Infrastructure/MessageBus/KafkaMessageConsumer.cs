@@ -1,10 +1,11 @@
 ﻿
 using Confluent.Kafka;
+using Infrastructure.MessageBus.Interfaces;
 using System.Text.Json;
 
-namespace KafkaPlayground.Worker.Infrastructure.MessageBus
+namespace Infrastructure.MessageBus
 {
-    class KafkaMessageConsumer<T> : IMessageConsumer<T>
+    public class KafkaMessageConsumer<T> : IMessageConsumer<T>
     {
         private readonly List<(IConsumer<Null, byte[]> Consumer, int Id)> _consumers;
         private readonly string _topic;

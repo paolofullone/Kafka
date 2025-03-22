@@ -1,4 +1,4 @@
-﻿namespace KafkaPlayground.Infrastructore.MessageBus
+﻿namespace Infrastructure.MessageBus.Interfaces
 {
     public interface IMessagePublisher
     {

@@ -1,9 +1,9 @@
-﻿using KafkaPlayground.Models;
-using KafkaPlayground.Worker.Infrastructure.MessageBus;
-using KafkaPlayground.Worker.Services;
+﻿using Application.Services;
+using Domain.Models;
+using Infrastructure.MessageBus.Interfaces;
 using Microsoft.Extensions.Hosting;
 
-namespace KafkaPlayground.Worker
+namespace Worker
 {
     class KafkaPlaygroundWorker(
         IMessageConsumer<SampleMessage> consumer,
@@ -26,5 +26,6 @@ namespace KafkaPlayground.Worker
 
             Console.WriteLine("Stoping workers...");
         }
+
     }
 }

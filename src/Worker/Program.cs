@@ -1,13 +1,16 @@
-﻿
+﻿using Application.Services;
 using Confluent.Kafka;
-using KafkaPlayground.Models;
-using KafkaPlayground.Worker;
-using KafkaPlayground.Worker.Infrastructure.MessageBus;
-using KafkaPlayground.Worker.Services;
+using Domain.Models;
+using Infrastructure.DbFactory;
+using Infrastructure.DbFactory.Interfaces;
+using Infrastructure.MessageBus;
+using Infrastructure.MessageBus.Interfaces;
+using Infrastructure.Repositories;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Worker;
 
 public partial class Program
 {
@@ -19,8 +22,6 @@ public partial class Program
 
         builder.Services.AddHostedService<KafkaPlaygroundWorker>();
 
-
-        // get some config from appsettings:
         var consumerConfig = builder.Configuration.GetSection("KafkaSettings:ConsumerConfig").Get<ConsumerConfig>();
         var parallelConsumers = builder.Configuration.GetSection("KafkaSettings:ParallelConsumers").Get<int>();
         var topic = builder.Configuration.GetSection("KafkaSettings:Topics:KafkaPlaygroundPublisher:Name").Get<string>();
@@ -31,6 +32,10 @@ public partial class Program
         builder.Services.AddSingleton<IKafkaPlaygroundConsumerService, KafkaPlaygroundConsumerService>();
 
 
+        builder.Services.AddSingleton<ISQLConnectionFactory>(sb =>
+            new SQLConnectionFactory(builder.Configuration.GetConnectionString("SqlServer")?.Trim()!));
+
+        builder.Services.AddSingleton<ISQLRepository, SQLRepository>();
 
         var app = builder.Build();
         app.Run();
