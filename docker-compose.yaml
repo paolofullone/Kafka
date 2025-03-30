@@ -1,28 +1,48 @@
 services:
-
-  sqlserver:
-    image: mcr.microsoft.com/mssql/server:2019-latest
-    container_name: sqlserver
-    ports:
-      - "1433:1433"
+  oracle:
+    image: gvenzl/oracle-xe:latest
+    container_name: oracle
     environment:
-      SA_PASSWORD: "Password123!"
-      ACCEPT_EULA: "Y"
+      - ORACLE_PASSWORD=oracle
+    ports:
+      - '1521:1521' # Oracle DB port
+      - '5500:5500' # Oracle EM Express port
     healthcheck:
-      test: ["CMD-SHELL", "/opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P Password123! -Q 'SELECT 1'"]
+      test: echo 'SELECT 1 FROM DUAL' | sqlplus -s system/oracle@localhost:1521/XEPDB1
       interval: 30s
       timeout: 10s
       retries: 5
       start_period: 30s
-    restart:
-      always
+    volumes:
+      - ./src/Data/Oracle:/container-entrypoint-initdb.d
+    restart: always
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2019-latest
+    container_name: sqlserver
+    ports:
+      - '1433:1433'
+    environment:
+      SA_PASSWORD: 'Password123!'
+      ACCEPT_EULA: 'Y'
+    healthcheck:
+      test:
+        [
+          'CMD-SHELL',
+          "/opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P Password123! -Q 'SELECT 1'",
+        ]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+    restart: always
 
-  init-database:
+  init-sql-server:
     image: mcr.microsoft.com/mssql-tools
+    container_name: sqlserver-init
     depends_on:
       - sqlserver
     volumes:
-      - ./src/data/:/tmp/
+      - ./src/Data/SqlServer/:/tmp/
     command: /bin/bash -c "sleep 60 && /opt/mssql-tools/bin/sqlcmd -S sqlserver -U sa -P Password123! -d master -i tmp/init.sql"
 
   kafka:
@@ -32,21 +52,21 @@ services:
     networks:
       - broker-kafka
     ports:
-      - "9092:9092"
-      - "9093:9093"
+      - '9092:9092'
+      - '9093:9093'
     environment:
-      KAFKA_KRAFT_MODE: "true"
+      KAFKA_KRAFT_MODE: 'true'
       KAFKA_PROCESS_ROLES: controller,broker
       KAFKA_NODE_ID: 1
-      KAFKA_CONTROLLER_QUORUM_VOTERS: "1@kafka:9093"
+      KAFKA_CONTROLLER_QUORUM_VOTERS: '1@kafka:9093'
       KAFKA_LISTENERS: BROKER://kafka:9091,EXTERNAL://0.0.0.0:9092,CONTROLLER://kafka:9093
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: BROKER:PLAINTEXT,CONTROLLER:PLAINTEXT,EXTERNAL:PLAINTEXT
       KAFKA_INTER_BROKER_LISTENER_NAME: BROKER
       KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
       KAFKA_ADVERTISED_LISTENERS: BROKER://kafka:9091,EXTERNAL://127.0.0.1:9092
-      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: 'true'
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
-      KAFKA_LOG_CLEANER_ENABLE: "false"
+      KAFKA_LOG_CLEANER_ENABLE: 'false'
       KAFKA_NUM_PARTITIONS: 1
       KAFKA_LOG_RETENTION_HOURS: 168
       KAFKA_LOG_RETENTION_BYTES: -1
@@ -61,16 +81,18 @@ services:
       - broker-kafka
     depends_on:
       - kafka
-    entrypoint: [ '/bin/sh', '-c' ]
+    entrypoint: ['/bin/sh', '-c']
     command: |
       "
       # blocks until kafka is reachable
       kafka-topics --list --bootstrap-server kafka:9091
 
       echo -e 'Creating topic '
-      
+
       kafka-topics --bootstrap-server kafka:9091 --create --if-not-exists --topic kafka-playground-topic --partitions 10 --replication-factor 1
-      
+
+      kafka-topics --bootstrap-server kafka:9091 --create --if-not-exists --topic kafka-healthcheck-topic --partitions 10 --replication-factor 1
+
       echo -e 'Sucessfully created topic'
 
       kafka-topics --list --bootstrap-server kafka:9091
@@ -84,7 +106,7 @@ services:
     depends_on:
       - kafka
     ports:
-      - "9001:9000"
+      - '9001:9000'
     environment:
       KAFKA_BROKER_CONNECT: kafka:9091
 
