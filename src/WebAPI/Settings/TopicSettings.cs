@@ -5,5 +5,7 @@ namespace WebApi.Settings
     public class TopicSettings
     {
         public TopicName KafkaPlaygroundPublisher { get; set; }
+        public TopicName KafkaHealthCheck { get; set; }
+
     }
 }

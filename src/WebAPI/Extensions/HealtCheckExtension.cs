@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+﻿using Confluent.Kafka;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using System.Text.Json;
 
@@ -8,14 +9,22 @@ namespace WebApi.Extensions
     {
         public static IServiceCollection AddApplicationHealthChecks(this IServiceCollection services, IConfiguration configuration)
         {
+            var kafkaConfig = configuration.GetSection("KafkaSettings").Get<ProducerConfig>();
+            var kafkaTopic = configuration.GetSection("KafkaSettings:Topics:KafkaHealthCheck:Name").Get<string>();
 
             services.AddHealthChecks()
                 .AddCheck("live", check: () => HealthCheckResult.Healthy(), tags: new[] { "live", "ready" }, TimeSpan.FromSeconds(30))
+                .AddKafka(kafkaConfig!, kafkaTopic!, name: "Kafka")
                 .AddSqlServer(
                     configuration.GetConnectionString("SqlServer")!,
                     name: "SqlServer",
                     failureStatus: HealthStatus.Unhealthy,
-                    tags: new[] { "db", "mssql" });
+                    tags: new[] { "db", "mssql" })
+                .AddOracle(
+                configuration.GetConnectionString("Oracle")!,
+                name: "Oracle",
+                failureStatus: HealthStatus.Unhealthy,
+                tags: new[] { "db", "oracle" });
 
             return services;
         }
@@ -24,13 +33,23 @@ namespace WebApi.Extensions
         {
             endpoints.MapHealthChecks("health/ready", new HealthCheckOptions
             {
-                Predicate = (check) => check.Tags.Contains("ready") || check.Tags.Contains("db") || check.Tags.Contains("mssql"),
+                Predicate = (check) => 
+                    check.Tags.Contains("ready") || 
+                    check.Tags.Contains("db") || 
+                    check.Tags.Contains("mssql") || 
+                    check.Tags.Contains("Kafka") || 
+                    check.Tags.Contains("oracle"),
                 ResponseWriter = WriteCustomResponse
             });
 
             endpoints.MapHealthChecks("health/live", new HealthCheckOptions
             {
-                Predicate = (check) => check.Tags.Contains("ready") || check.Tags.Contains("db") || check.Tags.Contains("mssql"),
+                Predicate = (check) =>
+                    check.Tags.Contains("ready") ||
+                    check.Tags.Contains("db") ||
+                    check.Tags.Contains("mssql") ||
+                    check.Tags.Contains("Kafka") ||
+                    check.Tags.Contains("oracle"),
                 ResponseWriter = WriteCustomResponse
             });
 
