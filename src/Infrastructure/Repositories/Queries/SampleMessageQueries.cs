@@ -6,12 +6,12 @@
             SELECT 
                 MESSAGE_ID as MessageId
                 MESSAGE_DATE as Date
-                FROM SAMPLE_MESSAGE
+                FROM SAMPLE_MESSAGES
             ORDER BY DATE
             """;
 
         public const string Add = """
-            INSERT INTO SAMPLE_MESSAGE
+            INSERT INTO SAMPLE_MESSAGES
             (MESSAGE_ID, MESSAGE_DATE)
             VALUES
             (@MessageId, @MessageDate)

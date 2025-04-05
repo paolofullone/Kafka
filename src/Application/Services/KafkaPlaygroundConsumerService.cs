@@ -3,13 +3,15 @@ using Infrastructure.Repositories;
 
 namespace Application.Services
 {
-    public class KafkaPlaygroundConsumerService(ISQLRepository repository) : IKafkaPlaygroundConsumerService
+    public class KafkaPlaygroundConsumerService(IDbSQLRepository sqlRepository) : IKafkaPlaygroundConsumerService
     {
         public async Task<bool> DoSomethingWithMessage(SampleMessage message, CancellationToken cancellationToken)
         {
             Console.WriteLine($"{message.MessageId.ToString()}, {message.MessageDate.ToString()}");
 
-            return await repository.AddAsync(message, cancellationToken) > 0;
+            var checkInsertion = await sqlRepository.AddAsync(message, cancellationToken);
+
+            return checkInsertion > 0;
         }
     }
 }

@@ -5,7 +5,7 @@ using Infrastructure.Repositories.Queries;
 
 namespace Infrastructure.Repositories
 {
-    public class SQLRepository(ISQLConnectionFactory connectionFactory) : IDbSQLRepository
+    public class OracleRepository(IOracleConnectionFactory connectionFactory) : IDbOracleRepository
     {
 
         public async Task<List<SampleMessage>> GetAll(CancellationToken cancellationToken)

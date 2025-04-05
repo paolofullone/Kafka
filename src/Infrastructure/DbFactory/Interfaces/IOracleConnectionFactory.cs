@@ -2,7 +2,7 @@
 
 namespace Infrastructure.DbFactory.Interfaces
 {
-    interface IOracleDb
+    public interface IOracleConnectionFactory
     {
         string GetConnectionString();
         IDbConnection GetConnection();
