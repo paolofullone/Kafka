@@ -1,49 +1,39 @@
 services:
   oracle:
-    image: gvenzl/oracle-xe:latest
+    cap_drop:
+      - NET_RAW
+    image: gvenzl/oracle-xe:21-slim-faststart
     container_name: oracle
     environment:
-      - ORACLE_PASSWORD=oracle
+      - ORACLE_PASSWORD=password
     ports:
-      - '1521:1521' # Oracle DB port
-      - '5500:5500' # Oracle EM Express port
-    healthcheck:
-      test: echo 'SELECT 1 FROM DUAL' | sqlplus -s system/oracle@localhost:1521/XEPDB1
-      interval: 30s
-      timeout: 10s
-      retries: 5
-      start_period: 30s
+      - '1521:1521'
     volumes:
-      - ./src/Data/Oracle:/container-entrypoint-initdb.d
+      - ./src/Data/Oracle/my-init.sql:/container-entrypoint-initdb.d/my-init.sql:ro
     restart: always
+
   sqlserver:
-    image: mcr.microsoft.com/mssql/server:2019-latest
+    image: mcr.microsoft.com/mssql/server:2022-latest
     container_name: sqlserver
-    ports:
-      - '1433:1433'
     environment:
       SA_PASSWORD: 'Password123!'
       ACCEPT_EULA: 'Y'
-    healthcheck:
-      test:
-        [
-          'CMD-SHELL',
-          "/opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P Password123! -Q 'SELECT 1'",
-        ]
-      interval: 30s
-      timeout: 10s
-      retries: 5
-      start_period: 30s
+      MSSQL_PID: 'Developer'
+    ports:
+      - '1433:1433'
+    cap_drop:
+      - NET_RAW
     restart: always
 
-  init-sql-server:
+  mssqltools:
     image: mcr.microsoft.com/mssql-tools
-    container_name: sqlserver-init
+    container_name: 'mssqltools'
     depends_on:
       - sqlserver
     volumes:
       - ./src/Data/SqlServer/:/tmp/
-    command: /bin/bash -c "sleep 60 && /opt/mssql-tools/bin/sqlcmd -S sqlserver -U sa -P Password123! -d master -i tmp/init.sql"
+    command: /bin/bash -c "ls /tmp/ && sleep 60 && chmod +x /tmp/database.sh && /tmp/database.sh"
+    #restart: always # can be used here and reduce the sleep time above, in this case set the sql script to verifiy for existing resources before creating them
 
   kafka:
     image: confluentinc/cp-kafka:latest
@@ -109,7 +99,6 @@ services:
       - '9001:9000'
     environment:
       KAFKA_BROKER_CONNECT: kafka:9091
-
 networks:
   broker-kafka:
     driver: bridge
