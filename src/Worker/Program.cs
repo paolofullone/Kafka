@@ -26,7 +26,7 @@ public partial class Program
         var parallelConsumers = builder.Configuration.GetSection("KafkaSettings:ParallelConsumers").Get<int>();
         var topic = builder.Configuration.GetSection("KafkaSettings:Topics:KafkaPlaygroundPublisher:Name").Get<string>();
 
-        builder.Services.AddSingleton<IMessageConsumer<SampleMessage>, KafkaMessageConsumer<SampleMessage>>(sp => 
+        builder.Services.AddSingleton<IMessageConsumer<SampleMessage>, KafkaMessageConsumer<SampleMessage>>(sp =>
             new KafkaMessageConsumer<SampleMessage>(consumerConfig, topic, parallelConsumers));
 
         builder.Services.AddSingleton<IKafkaPlaygroundConsumerService, KafkaPlaygroundConsumerService>();
@@ -35,7 +35,12 @@ public partial class Program
         builder.Services.AddSingleton<ISQLConnectionFactory>(sb =>
             new SQLConnectionFactory(builder.Configuration.GetConnectionString("SqlServer")?.Trim()!));
 
-        builder.Services.AddSingleton<ISQLRepository, SQLRepository>();
+        builder.Services.AddSingleton<IOracleConnectionFactory>(sb =>
+            new OracleConnectionFactory(builder.Configuration.GetConnectionString("Oracle")?.Trim()!));
+
+        builder.Services.AddSingleton<IDbSQLRepository, SQLRepository>();
+        builder.Services.AddSingleton<IDbOracleRepository, OracleRepository>();
+
 
         var app = builder.Build();
         app.Run();
