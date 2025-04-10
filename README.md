@@ -1,6 +1,6 @@
-# KafkaPlayground
+# Kafka Poc
 
-Pub/Sub Kafka Playground - POC Multiple Consumers
+Pub/Sub Kafka - POC Multiple Consumers
 
 ## Description
 
