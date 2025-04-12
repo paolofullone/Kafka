@@ -8,6 +8,9 @@ This scenario is particularly useful when you want to have multiple consumers re
 
 Using visual studio run the API + Worker profile and it will start both projects.
 
+<img src="./images/vs_multiple_projects.png" alt="VS Profile"/>
+
+
 Run the docker-compose file to start the Kafka and Zookeeper containers.
 
 ```bash
