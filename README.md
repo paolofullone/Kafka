@@ -1,8 +1,10 @@
 # Kafka Multiple Consumers
 
-This projects demonstrates how do create a Kafka Consumer with multiple consumers per instance in .net 8.0 using a background service (worker) and a Web API to publish the messages on the kafka topic.
+This project demonstrates how to create a .NET 8 Kafka consumer with multiple instances using a background service and Web API to publish messages. It scales horizontally to process high-volume data, ideal for financial calculations.
 
-This scenario is particularly useful when you want to have multiple consumers reading from the same topic and the possibility of scaling horizontally to increase the capacity of your application and reduce the total processing time of a specific operation.
+## Overview
+
+I built this POC to explore Kafka’s scalability, configuring 10 consumers per instance. It mirrors real-world scenarios like brokerage calculations.
 
 ## How to run
 
@@ -39,7 +41,7 @@ You can also check if the docker containers are running properly by accessing th
 
 ### Unhealthy
 
-If something goes wrong, you will se an error message like this one, and it will guide you trough the problem.
+If something goes wrong, you will se an error message like this one, and it will guide you through the problem.
 
 <img src="./images/healthcheck_unhealthy.png" alt="Healthy"/>
 
@@ -57,11 +59,11 @@ Once the messages were published, we can inspect them using Kafdrop.
 
 ## Worker
 
-The worker is a background service that consumes messages from the kafka topic and processes them. It is configured to have multiple consumers per instance, which allows it to scale horizontally and process messages in parallel. In this example we defined 10 consumers and we can inspect them here:
+The worker is a background service that consumes messages from the kafka topic and processes them. It is configured to have multiple consumers per instance, which allows it to scale horizontally and process messages in parallel. In this example I defined 10 consumers and we can inspect them here:
 
 <img src="./images/worker_consumers.png" alt="Worker"/>
 
-And once we publish some messages via Web API the worker will consume them, in this case we just created a Console.WriteLine:
+And once we publish some messages via Web API the worker will consume them, in this case I logged messages to demonstrate parallel processing:
 
 <img src="./images/worker-consuming.png" alt="Worker Messages"/>
 
@@ -73,9 +75,9 @@ In a real world example, you would have a Kafka cluster running in a cloud provi
 
 This solution of multiple consumers could be used to run multiple instances of the same consumer, or to run different consumers that process the same messages in different ways. We could have for example a repository reading millions of lines of a database and publishing them on a kafka topic, latter on our worker would read thos millions of lines and calculate brokerages for example and store the calculated values in a different database. This way we could have multiple workers doing the same job, or different jobs, and scaling horizontally.
 
-This is a very simple example, but it could be used in a real world scenario. The possibilities are endless.
+This POC effectively demonstrates scalable Kafka patterns in the consumer side.
 
-## Knwown Issues
+## Known Issues
 
 If you have any trouble running locally, I suggest these handful docker commands:
 
@@ -93,6 +95,9 @@ If the database doesn't proper initialize, try increasing the 60 seconds in the 
 ```yaml
 command: /bin/bash -c "sleep 60 && /opt/mssql-tools/bin/sqlcmd -S sqlserver -U sa -P Password123! -d master -i tmp/init.sql"
 ```
+## Portfolio
+
+Check my [portfolio](https://paolofullone.github.io/) to see my projects and articles.
 
 ## Conclusion
 
