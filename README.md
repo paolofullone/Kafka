@@ -29,7 +29,7 @@ The docker compose will create a SQL Server and a database, when the POST /api/v
 
 The docker compose will also create a Kafka topic called "kafka-playground-topic" and the topics, partitions, messages etc can be inspected with Kafdrop:
 
-<img src="./images/kafdrop.png" alt="Kadrop UI"/>
+<img src="./images/kafdrop.png" alt="Kafdrop UI"/>
 
 ## Healthcheck
 
@@ -47,7 +47,7 @@ If something goes wrong, you will se an error message like this one, and it will
 
 ## Web API
 
-The Web API here has only one job, to publish some messages on a kafka topic so they can be consumed by a worker.
+The Web API here has only one job, to publish messages to a kafka topic so they can be consumed by a worker.
 
 <img src="./images/webapi.png" alt="Web API"/>
 
@@ -63,7 +63,7 @@ The worker is a background service that consumes messages from the kafka topic a
 
 <img src="./images/worker_consumers.png" alt="Worker"/>
 
-And once we publish some messages via Web API the worker will consume them, in this case I logged messages to demonstrate parallel processing:
+And once we publish some messages via Web API the worker will consume them, in this case I logged messages to verify parallel processing:
 
 <img src="./images/worker-consuming.png" alt="Worker Messages"/>
 
@@ -73,13 +73,13 @@ So we can see the it is randomly choosing the consumers to process the messages,
 
 In a real world example, you would have a Kafka cluster running in a cloud provider, and you would use a library like Confluent.Kafka to produce and consume messages.
 
-This solution of multiple consumers could be used to run multiple instances of the same consumer, or to run different consumers that process the same messages in different ways. We could have for example a repository reading millions of lines of a database and publishing them on a kafka topic, latter on our worker would read thos millions of lines and calculate brokerages for example and store the calculated values in a different database. This way we could have multiple workers doing the same job, or different jobs, and scaling horizontally.
+This solution of multiple consumers could be used to run multiple instances of the same consumer, or to run different consumers that process the same messages in different ways. We could have for example a repository reading millions of lines of a database and publishing them on a kafka topic, later on our worker would read those millions of lines and calculate brokerages for example and store the calculated values in a different database. This way we could have multiple workers doing the same job, or different jobs, and scaling horizontally.
 
 This POC effectively demonstrates scalable Kafka patterns in the consumer side.
 
 ## Known Issues
 
-If you have any trouble running locally, I suggest these handful docker commands:
+If you have any trouble running locally, I suggest these useful docker commands:
 
 Remove all containers:
 docker rm -vf $(docker ps -a -q)
@@ -99,6 +99,10 @@ command: /bin/bash -c "sleep 60 && /opt/mssql-tools/bin/sqlcmd -S sqlserver -U s
 
 Check my [portfolio](https://paolofullone.github.io/) to see my projects and articles.
 
+## Portfolio
+
+Explore more at [paolofullone.github.io](https://paolofullone.github.io/).
+
 ## Conclusion
 
-This project is a POC to demonstrate how to use Kafka as a Pub/Sub system with multiple consumers. It is not meant to be used in production, but it can be used as a starting point for building a real world application.
+This POC showcases scalable Kafka patterns. It is not meant to be used in production, but it can be used as a starting point for building a real world application.
